@@ -1,0 +1,52 @@
+---
+const { images } = Astro.props;
+---
+<footer class="bg-background-light dark:bg-[#0f0d14] border-t border-[#ecebf0] dark:border-[#2d2a35] py-16">
+  <div class="max-w-[1200px] mx-auto px-10 grid grid-cols-1 md:grid-cols-4 gap-12">
+    <div class="reveal flex flex-col gap-4">
+      <div class="flex items-center gap-2 text-primary">
+        <h2 class="text-[#131217] dark:text-white text-lg font-bold">Danny Tortas</h2>
+      </div>
+      <p class="text-[#6b6383] dark:text-gray-400 text-sm leading-relaxed">
+        Pastelería casera con recetas propias, ingredientes frescos y decoración artesanal para tus celebraciones.
+      </p>
+      <div class="flex gap-4 mt-2">
+        <a class="text-primary hover:scale-110 transition-transform" href="https://www.instagram.com/danny_tortas/" aria-label="Instagram" target="_blank" rel="noreferrer">
+          <span class="material-symbols-outlined">photo_camera</span>
+        </a>
+        <a class="text-primary hover:scale-110 transition-transform" href="#specialties" aria-label="Especialidades">
+          <span class="material-symbols-outlined">favorite</span>
+        </a>
+        <a class="text-primary hover:scale-110 transition-transform" href="#contact" aria-label="Opiniones">
+          <span class="material-symbols-outlined">forum</span>
+        </a>
+      </div>
+    </div>
+    <div class="reveal">
+      <h3 class="text-[#131217] dark:text-white font-bold mb-4">Enlaces rápidos</h3>
+      <ul class="flex flex-col gap-3 text-sm text-[#6b6383] dark:text-gray-400">
+        <li><a class="hover:text-primary transition-colors" href="#story">Nuestra historia</a></li>
+        <li><a class="hover:text-primary transition-colors" href="#specialties">Especialidades</a></li>
+        <li><a class="hover:text-primary transition-colors" href="#contact">Opiniones</a></li>
+        <li><a class="hover:text-primary transition-colors" href="https://wa.me/56961497814" target="_blank" rel="noreferrer">Pide por WhatsApp</a></li>
+      </ul>
+    </div>
+    <div class="reveal">
+      <h3 class="text-[#131217] dark:text-white font-bold mb-4">Horarios</h3>
+      <ul class="flex flex-col gap-3 text-sm text-[#6b6383] dark:text-gray-400">
+        <li class="flex justify-between"><span>Lun - Vie</span> <span>8:00 - 19:00</span></li>
+        <li class="flex justify-between"><span>Sábado</span> <span>8:00 - 17:00</span></li>
+        <li class="flex justify-between"><span>Domingo</span> <span>8:00 - 14:00</span></li>
+      </ul>
+    </div>
+    <div class="reveal">
+      <h3 class="text-[#131217] dark:text-white font-bold mb-4">Ubicación</h3>
+      <div class="flex flex-col gap-4 text-sm text-[#6b6383] dark:text-gray-400">
+        <p>Santiago, Chile<br />Entregas a domicilio y retiros coordinados.</p>
+      </div>
+    </div>
+  </div>
+  <div class="max-w-[1200px] mx-auto px-10 mt-16 pt-8 border-t border-[#ecebf0] dark:border-[#2d2a35] text-center text-xs text-[#6b6383] dark:text-gray-500">
+    <p>© 2026 Danny Tortas. Hecho a mano, con cariño.</p>
+  </div>
+</footer>

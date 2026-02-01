@@ -1,0 +1,37 @@
+---
+import tortasImage from "../img/img_tortas.png";
+---
+<div class="max-w-[1200px] mx-auto px-4 py-10">
+  <div class="p-0 sm:p-4">
+    <section
+      id="menu"
+      data-section
+      class="reveal flex min-h-[560px] flex-col gap-6 sm:gap-8 rounded-xl items-start justify-end px-6 pb-16 sm:px-12 relative overflow-hidden group shadow-2xl bg-cover bg-center bg-no-repeat"
+      style={`background-image: linear-gradient(rgba(0,0,0,.20) 0%, rgba(0,0,0,.60) 100%), url(${tortasImage.src});`}
+      aria-label="Tortas artesanales frescas sobre una mesa rústica de madera"
+    >
+      <div class="flex flex-col gap-3 text-left max-w-2xl relative z-10">
+        <h1 class="text-white text-5xl sm:text-6xl font-black leading-tight tracking-[-0.033em]">
+          Hecho a mano con amor, horneado a la perfección
+        </h1>
+        <p class="text-white/90 text-lg sm:text-xl font-normal leading-relaxed">
+          Disfruta la calidez de los métodos tradicionales y los ingredientes orgánicos en cada bocado. De nuestro horno a tu hogar.
+        </p>
+      </div>
+      <a
+        href="https://www.instagram.com/danny_tortas/"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-animate="ripple"
+        class="z-10 flex min-w-[180px] cursor-pointer items-center justify-center gap-3 overflow-hidden rounded-xl h-12 px-6 bg-primary text-white text-lg font-bold leading-normal tracking-[0.015em] hover:scale-105 transition-transform"
+      >
+        <svg aria-hidden="true" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+          <path d="M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4Zm0 2a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2H7Z" />
+          <path d="M12 8.5A3.5 3.5 0 1 1 8.5 12 3.5 3.5 0 0 1 12 8.5Zm0 2A1.5 1.5 0 1 0 13.5 12 1.5 1.5 0 0 0 12 10.5Z" />
+          <circle cx="17" cy="7" r="1" />
+        </svg>
+        <span class="truncate">Revisa Nuestro Instagram</span>
+      </a>
+    </section>
+  </div>
+</div>

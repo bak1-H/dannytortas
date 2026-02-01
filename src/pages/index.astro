@@ -1,0 +1,51 @@
+---
+import '../styles/global.css';
+import Navbar from '../components/Navbar.astro';
+import Hero from '../components/Hero.astro';
+import Specialties from '../components/Specialties.astro';
+import AboutUs from '../components/AboutUs.astro';
+import Contact from '../components/Contact.astro';
+import Footer from '../components/Footer.astro';
+
+const images = {
+  hero: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAAz2KkB9v5pQy37aG0LtOubZx6HpUwwpcZTTaNc96IwDEOUGxAgH1W-hqn7bUO7sRAHw5kdYay7x0Vmb005sZS6taTOOy218ZpXsvlKYWE1JzqDd-Q1weDnI1LCF947l2Kotni2mF0yyEGsMqWV6RrHUxYabRutUeVPoVj91UWQ-66-ta6Luen1DYahWsdKT1sV7enkS0k9WdjLdf4TGxgKfCNQTB_HfseNT9nZN8FDHWZdNJVttDLklIU6mxRB616KWaJzwgGcImY',
+  sourdough: 'https://lh3.googleusercontent.com/aida-public/AB6AXuANHBOtNRXUkCDaX5LpOq4ml0nae93v2IYlPNzjpdNnHJXcQghEeddB0g2deIg4F6fRnPT5dAsrn20ZS4-1LRIwwJWobQBLFbw0Xhk6IunfgI8KmUrEVY6biXXBpBswVScRl-SW1uqfZIv18vIfvyYqH5h9EmTDJ93iIgkDIoAPg8o-mm3LkPsYO_WXcTEA-5tYWRaVlXYnpaHyEW7mxw5dQbhEijCnMPQW3jG4WmBt30n92zVSgr7GVvmX50hgEOgmX7UhkHUfYSeb',
+  macarons: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBj_AuRLxvizAZq3_FWzR5ThPp4VZn3a1aGBqIQ1FdH68uM5I3Hb8jtZ6wHSwiRB7xjyK1Mj2jPd4yWB6WCMa1u5_vO5oFzoRzKkREBEAvcKaus8CZw8RxfwuW5zHowZZlpk8Sa-XYnFC1n7-ctQr3V95tqt-6tqZFe7TxN4jsa9isJ286gkCronlAnSFIWfW6jNa9DXpnWWCx1ar7E8UuVRIrIxVcujMJrzu5m9L4JnrtUVVL0FQV59EyMYVrd2Wmd6egub_dM5cYy',
+  croissants: 'https://lh3.googleusercontent.com/aida-public/AB6AXuC6w1MudR6jtvMSisINzfWTGlqqWtI4MSP0ZPWhuY54MLpIAii5Xd1nvXlRcKC4gOMKFav4mpSng5Lvo354QUK1x2GjmS_gCTQwOcfENdwqDG2Kt-CUOgkrcAd69IDmN08vNBhPi1hN-Jw_AcdGXkUUNUKGloGXl1T-L0spxd7BLOM91o8HlenRhBB__pbE9XWsRZ1yQxs_FIKCN2UPIsQlIpt3Zts2UDf9Esug5Ox54CRVOb68ub2qnIpeeyEWUnuWGSEMuMwdu6N2',
+  kneading: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCFTEbhDCzE8WRugfG8xwvnZ2Ystgy_liExBoFrEjUY-0_IdKcCrTrVI1uIyf5c3I4Owiy2wJa2SgiBE7OkwCFiQEGpsFS2k0qY3E8eKVFkmtAAw38dyycVGOiujmy5WLfqWdcKYNX4lN5sw-Hj9HtgbdM6DBaeYz7F5Ixmpmwbg5QPP_RPs0T7yNQPxIMlGaoxglorKnWvF22EwrbMHBB6ThATX2nBtAda5FG522ojCiG79pn3Lp5uHVDKZ3njg5NNpyBnqQ12pQk_',
+  map: 'https://lh3.googleusercontent.com/aida-public/AB6AXuAwIXuox0VZGz9a6oazGI1ZWdoaTyoKzjGUweXfSecg27cSz-BGK93xDE0ij-5LYY7dpofGV8IQUeOE1LVVjffAjkNWQgwM25TM2velAbKTBG53F2C4CEJ1jPQHAJ9GncDR2Rs_qECRCs98mYlOoVaBFXb9SKc91nj2QUaOXWMAubbm4d7mn4GE-wSrKShqcf7wbPFMtENaK3unPjlz9cqMBerFZnEAwfI7GrF0s5YBbzCFVlr-24jwx1VUlMqE933menJZv-6iAM5l'
+};
+---
+
+<html lang="es" class="light">
+  <head>
+    
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Tortas personalizadas, cupcakes y coctelería a pedido para cumpleaños y eventos en Santiago. Decoración artesanal, ingredientes frescos y entregas coordinadas." />
+    <meta name="keywords" content="tortas personalizadas, pastelería artesanal, tortas a pedido, coctelería, cupcakes, Santiago" />
+    <link rel="canonical" href="https://dannytortas.cl/" />
+    <meta name="theme-color" content="#e54e7e" />
+    <title>Danny Tortas | Tortas y Coctelería a Pedido en Santiago</title>
+
+    <!-- Fonts + Material Symbols -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap" rel="stylesheet" />
+  </head>
+
+  <body class="bg-background-light dark:bg-background-dark text-[#131217] dark:text-[#faf9fb]">
+    <div class="relative flex min-h-screen w-full flex-col overflow-x-hidden">
+      <Navbar />
+      <main class="flex-1">
+        <Hero images={images} />
+        <Specialties images={images} />
+        <AboutUs images={images} />
+        <Contact />
+      </main>
+      <Footer images={images} />
+    </div>
+    <script type="module" src="/scripts/animations.js"></script>
+  </body>
+</html>

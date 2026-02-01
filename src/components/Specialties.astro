@@ -1,0 +1,51 @@
+---
+import imageRoll from "../img/1.png";
+import imageBirthday from "../img/2.png";
+import imageCatering from "../img/3.png";
+---
+<section id="specialties" data-section class="bg-pastel-blue dark:bg-primary/10 py-20 mt-10">
+  <div class="max-w-[1200px] mx-auto px-4">
+    <div class="reveal flex items-center justify-between mb-10 px-4">
+      <div class="flex flex-col gap-2">
+        <h2 class="text-[#131217] dark:text-white text-4xl font-bold leading-tight tracking-[-0.015em]">Especialidades</h2>
+        <div class="h-1 w-20 bg-primary rounded-full"></div>
+      </div>
+      <p class="text-[#6b6383] dark:text-gray-400 max-w-md text-right hidden md:block">
+        Descubre nuestras delicias artesanales, elaboradas con ingredientes frescos y técnicas tradicionales para ofrecerte sabores auténticos en cada bocado.
+      </p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 p-4">
+      <!-- Card 1 -->
+      <article class="reveal flex flex-col gap-4 bg-soft-beige dark:bg-[#2d2a35] p-5 rounded-xl shadow-md hover:shadow-xl transition-shadow transition-transform duration-300 hover:-translate-y-1">
+        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg overflow-hidden" style={`background-image: url(${imageRoll.src});`} aria-label="Brazo de Reina"></div>
+        <div class="flex flex-col gap-1">
+          <div class="flex justify-between items-center">
+            <p class="text-[#131217] dark:text-white text-xl font-bold">Brazo de Reina</p>
+          </div>  
+          <p class="text-[#6b6383] dark:text-gray-400 text-sm leading-normal">Bizcocho enrollado con relleno cremoso y cobertura de frutos secos para un final crujiente.</p>
+        </div>
+      </article>
+      <!-- Card 2 -->
+      <article class="reveal flex flex-col gap-4 bg-soft-beige dark:bg-[#2d2a35] p-5 rounded-xl shadow-md hover:shadow-xl transition-shadow transition-transform duration-300 hover:-translate-y-1">
+        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg overflow-hidden" style={`background-image: url(${imageBirthday.src});`} aria-label="Torta de chocolate cumpleaños"></div>
+        <div class="flex flex-col gap-1">
+          <div class="flex justify-between items-center">
+            <p class="text-[#131217] dark:text-white text-xl font-bold">Torta de Chocolate</p>
+          </div>
+          <p class="text-[#6b6383] dark:text-gray-400 text-sm leading-normal">Bizcocho húmedo con ganache, drip de cacao y topping festivo hecho a mano.</p>
+        </div>
+      </article>
+      <!-- Card 3 -->
+      <article class="reveal flex flex-col gap-4 bg-soft-beige dark:bg-[#2d2a35] p-5 rounded-xl shadow-md hover:shadow-xl transition-shadow transition-transform duration-300 hover:-translate-y-1">
+        <div class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-lg overflow-hidden" style={`background-image: url(${imageCatering.src});`} aria-label="Mesa de catering dulce"></div>
+        <div class="flex flex-col gap-1">
+          <div class="flex justify-between items-center">
+            <p class="text-[#131217] dark:text-white text-xl font-bold">Cóctel Surtido</p>
+          </div>
+          <p class="text-[#6b6383] dark:text-gray-400 text-sm leading-normal">Mesa con variedad de cócteles artesanales para complementar tus eventos.</p>
+        </div>
+      </article>
+    </div>
+    <script type="module" src="/scripts/carousel-horizontal.js"></script>
+  </div>
+</section>

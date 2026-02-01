@@ -1,0 +1,43 @@
+---
+const { images } = Astro.props;
+---
+<section id="story" data-section class="py-20 bg-background-light dark:bg-background-dark">
+  <div class="max-w-[1200px] mx-auto px-4">
+    <div class="flex flex-col md:flex-row gap-16 items-center px-4">
+      <div class="reveal w-full md:w-1/2 flex flex-col gap-6">
+        <h2 class="text-[#131217] dark:text-white tracking-light text-4xl sm:text-5xl font-black leading-tight">Hecho en casa, con cariño</h2>
+        <p class="text-[#131217] dark:text-gray-300 text-lg leading-relaxed">
+          Nacimos en la cocina de casa preparando tortas para familia y amigos. Hoy seguimos con la misma obsesión: insumos frescos, mantequilla de verdad y recetas propias que ves a diario en @danny_tortas.
+        </p>
+        <p class="text-[#131217] dark:text-gray-300 text-lg leading-relaxed">
+          Cada pedido se arma a mano, sin atajos, para que tu celebración tenga un postre que se vea increíble y sepa todavía mejor.
+        </p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+          <div class="flex items-center gap-3">
+            <div class="bg-primary/20 p-2 rounded-lg"><span class="material-symbols-outlined text-primary">eco</span></div>
+            <span class="font-bold">Ingredientes frescos</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="bg-primary/20 p-2 rounded-lg"><span class="material-symbols-outlined text-primary">history</span></div>
+            <span class="font-bold">Recetas caseras</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="bg-primary/20 p-2 rounded-lg"><span class="material-symbols-outlined text-primary">schedule</span></div>
+            <span class="font-bold">Sin prisas</span>
+          </div>
+          <div class="flex items-center gap-3">
+            <div class="bg-primary/20 p-2 rounded-lg"><span class="material-symbols-outlined text-primary">oven_gen</span></div>
+            <span class="font-bold">Horneado al día</span>
+          </div>
+        </div>
+      </div>
+      <div class="reveal w-full md:w-1/2">
+        <div class="relative">
+          <div class="absolute -top-4 -left-4 w-24 h-24 bg-soft-beige rounded-xl -z-10"></div>
+          <div class="absolute -bottom-4 -right-4 w-24 h-24 bg-pastel-blue rounded-xl -z-10"></div>
+          <div class="w-full aspect-[4/5] bg-center bg-no-repeat bg-cover rounded-xl shadow-2xl overflow-hidden" style={`background-image: url(${images.kneading});`} aria-label="Baker kneading dough"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
