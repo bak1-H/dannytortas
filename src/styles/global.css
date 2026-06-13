@@ -94,12 +94,16 @@ body {
   transform: scaleX(1);
 }
 
-/* Hero background — static so the buttons' backdrop-filter can sample it
-   (any transform/will-change here promotes a separate GPU layer and breaks the blur) */
+/* Hero background — slow Ken Burns zoom for depth */
 .hero-bg {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  transform: scale(1.08);
+  animation: kenburns 22s var(--ease-soft) forwards;
+}
+@keyframes kenburns {
+  to { transform: scale(1); }
 }
 
 /* button ripple */

@@ -160,3 +160,43 @@ if (!prefersReducedMotion && tiltWraps.length && window.matchMedia('(pointer: fi
     });
   }
 }
+
+// 7) Tilt on scroll for touch devices (no cursor) — cards lean by their distance
+//    to the viewport center and straighten as they pass through the middle.
+const isTouch =
+  window.matchMedia('(pointer: coarse)').matches && !window.matchMedia('(pointer: fine)').matches;
+
+if (!prefersReducedMotion && tiltWraps.length && isTouch) {
+  const MAX = 6; // max tilt in degrees
+  let ticking = false;
+
+  const update = () => {
+    ticking = false;
+    const vh = window.innerHeight;
+    const mid = vh / 2;
+
+    for (const wrap of tiltWraps) {
+      const card = wrap.querySelector('article');
+      if (!card) continue;
+
+      const r = wrap.getBoundingClientRect();
+      if (r.bottom < 0 || r.top > vh) continue; // skip offscreen cards
+
+      const center = r.top + r.height / 2;
+      let d = (mid - center) / mid; // ~ -1 (below) .. 1 (above)
+      d = Math.max(-1, Math.min(1, d));
+      card.style.transform = `rotateX(${(d * MAX).toFixed(2)}deg)`;
+    }
+  };
+
+  const onScroll = () => {
+    if (!ticking) {
+      ticking = true;
+      requestAnimationFrame(update);
+    }
+  };
+
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll, { passive: true });
+  update();
+}
