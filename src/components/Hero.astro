@@ -1,8 +1,12 @@
 ---
+import { getImage } from 'astro:assets';
 import tortasImage from '../img/img_tortas.png';
 import Button from './ui/Button.astro';
 
 const WHATSAPP = 'https://wa.me/56961497814';
+
+// Optimized hero background (webp, resized) instead of the raw 2 MB PNG
+const heroBg = await getImage({ src: tortasImage, format: 'webp', width: 1920, quality: 68 });
 ---
 
 <section
@@ -11,7 +15,7 @@ const WHATSAPP = 'https://wa.me/56961497814';
   class="relative flex min-h-[680px] h-screen items-center justify-center overflow-hidden"
   aria-label="Tortas artesanales de Danny Tortas"
 >
-  <div class="hero-bg absolute inset-0" style={`background-image: url(${tortasImage.src});`} aria-hidden="true"></div>
+  <div class="hero-bg absolute inset-0" style={`background-image: url(${heroBg.src});`} aria-hidden="true"></div>
   <div class="hero-gradient absolute inset-0" aria-hidden="true"></div>
 
   <div class="reveal relative z-10 mx-auto max-w-4xl px-6 text-center">
