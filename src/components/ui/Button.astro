@@ -1,0 +1,41 @@
+---
+type Variant = 'primary' | 'turquoise' | 'outline' | 'ghost';
+
+interface Props {
+  href?: string;
+  variant?: Variant;
+  external?: boolean;
+  class?: string;
+}
+
+const { href, variant = 'primary', external = false, class: extra = '' } = Astro.props;
+
+const base =
+  'inline-flex items-center justify-center gap-2 rounded-full font-body font-semibold tracking-wide transition-all duration-300 active:scale-95';
+
+const sizing = 'px-8 py-3.5 text-sm';
+
+const variants: Record<Variant, string> = {
+  primary: 'bg-primary text-white shadow-soft hover:bg-primary-dark hover:scale-105',
+  turquoise: 'bg-turquoise text-white hover:opacity-90 hover:scale-105',
+  outline: 'border border-white/40 bg-white/15 text-white backdrop-blur-md hover:bg-white/25',
+  ghost: 'text-primary hover:gap-3 px-0 py-0'
+};
+
+const cls = `${base} ${variant === 'ghost' ? '' : sizing} ${variants[variant]} ${extra}`.trim();
+
+const rel = external ? 'noopener noreferrer' : undefined;
+const target = external ? '_blank' : undefined;
+---
+
+{
+  href ? (
+    <a href={href} class={cls} data-animate="ripple" target={target} rel={rel}>
+      <slot />
+    </a>
+  ) : (
+    <button type="button" class={cls} data-animate="ripple">
+      <slot />
+    </button>
+  )
+}

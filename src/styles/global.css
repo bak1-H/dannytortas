@@ -2,21 +2,109 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --primary: #9282C4;
+  --turquoise: #45BCD2;
+  /* Soft, refined easing (easeOutExpo-ish) shared by reveals & micro-interactions */
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 html { scroll-behavior: smooth; }
 
 body {
-  font-family: "Be Vietnam Pro", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial, "Noto Sans", "Helvetica Neue", sans-serif;
+  font-family: "Plus Jakarta Sans", ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", sans-serif;
 }
 
-/* small helper for scroll reveal */
+.material-symbols-outlined {
+  vertical-align: middle;
+  line-height: 1;
+}
+
+/* Stabilizes a rounded overflow:hidden clip when a child is transformed,
+   preventing Chromium/Safari from leaking square corners on repeated hover. */
+.clip-fix {
+  transform: translateZ(0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+}
+
+/* 3D tilt cards — glossy highlight that follows the cursor */
+.tilt-glare {
+  background: radial-gradient(
+    circle at var(--gx, 50%) var(--gy, 50%),
+    rgba(255, 255, 255, 0.35),
+    rgba(255, 255, 255, 0) 55%
+  );
+  opacity: 0;
+  transition: opacity 300ms ease;
+}
+[data-tilt]:hover .tilt-glare {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tilt-glare {
+    display: none;
+  }
+}
+
+/* Hero overlay so white text stays legible over imagery */
+.hero-gradient {
+  background: linear-gradient(to bottom, rgba(44, 39, 56, 0.45), rgba(44, 39, 56, 0.15) 40%, rgba(44, 39, 56, 0.55));
+}
+
+/* Scroll reveal — base hidden state */
 .reveal {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 700ms ease, transform 700ms ease;
+  transform: translateY(24px);
+  transition:
+    opacity 750ms var(--ease-soft),
+    transform 750ms var(--ease-soft);
+  transition-delay: var(--reveal-delay, 0ms);
 }
+/* Directional entrances — override the transform of the hidden state */
+.reveal-left  { transform: translateX(-32px); }
+.reveal-right { transform: translateX(32px); }
+.reveal-scale { transform: scale(0.94); }
+
+/* Revealed state wins via higher specificity (.reveal.is-visible) */
 .reveal.is-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: none;
+}
+
+/* Animated underline for nav links */
+[data-nav] {
+  position: relative;
+}
+[data-nav]::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  height: 2px;
+  width: 100%;
+  background: var(--primary);
+  border-radius: 9999px;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 320ms var(--ease-soft);
+}
+[data-nav]:hover::after,
+[data-nav].text-primary::after {
+  transform: scaleX(1);
+}
+
+/* Hero background — slow Ken Burns zoom for depth */
+.hero-bg {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  transform: scale(1.08);
+  animation: kenburns 22s var(--ease-soft) forwards;
+  will-change: transform;
+}
+@keyframes kenburns {
+  to { transform: scale(1); }
 }
 
 /* button ripple */
@@ -33,3 +121,26 @@ body {
   transition: opacity 400ms ease;
 }
 .ripple.is-pressed::after { opacity: 1; }
+
+/* Accessibility: honor users who ask for less motion */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    transition-delay: 0ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .reveal {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .hero-bg {
+    transform: none !important;
+  }
+}

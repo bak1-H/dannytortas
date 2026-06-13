@@ -1,1 +1,12 @@
 node_modules
+CLAUDE.md
+netlify.toml
+
+# Build output
+dist/
+
+# Astro cache & generated types
+.astro/
+
+# Agent tooling
+.atl/

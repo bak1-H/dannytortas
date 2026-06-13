@@ -1,0 +1,42 @@
+---
+interface Props {
+  image: string;
+  title: string;
+  text: string;
+  badge?: string;
+  cta: string;
+  href: string;
+}
+
+const { image, title, text, badge, cta, href } = Astro.props;
+---
+
+<div data-tilt class="h-full [perspective:900px]">
+  <article
+    class="tilt-card reveal reveal-scale isolate relative flex h-full flex-col bg-white rounded-3xl overflow-hidden shadow-soft transition-transform duration-200 ease-out will-change-transform"
+  >
+    <div class="relative h-72 overflow-hidden rounded-t-3xl clip-fix">
+      <img src={image} alt={title} loading="lazy" class="h-full w-full object-cover" />
+      {
+        badge && (
+          <span class="absolute top-4 left-4 bg-sky/90 backdrop-blur-md px-3 py-1 rounded-full text-primary text-xs font-bold uppercase tracking-widest">
+            {badge}
+          </span>
+        )
+      }
+    </div>
+    <div class="flex flex-col gap-3 p-7">
+      <h3 class="font-display text-2xl text-ink">{title}</h3>
+      <p class="text-muted leading-relaxed">{text}</p>
+      <a
+        href={href}
+        class="mt-2 inline-flex items-center gap-2 text-primary font-semibold hover:gap-4 transition-all"
+      >
+        {cta}
+        <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+      </a>
+    </div>
+
+    <div class="tilt-glare pointer-events-none absolute inset-0 z-20" aria-hidden="true"></div>
+  </article>
+</div>

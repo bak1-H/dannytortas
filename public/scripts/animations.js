@@ -3,6 +3,9 @@
 const header = document.querySelector('header[data-animate="sticky"]');
 let lastScrollY = window.scrollY || 0;
 
+// Respect users who prefer reduced motion (set once, queried below)
+const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 // 1) Smooth scroll for internal anchors (adjusted for sticky header height)
 document.addEventListener('click', (e) => {
   const a = e.target.closest('a[href^="#"]');
@@ -19,18 +22,35 @@ document.addEventListener('click', (e) => {
   const targetTop = target.getBoundingClientRect().top + window.scrollY;
   const y = Math.max(0, targetTop - headerOffset - 8);
 
-  window.scrollTo({ top: y, behavior: 'smooth' });
+  window.scrollTo({ top: y, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
 });
 
-// 2) Scroll reveal using IntersectionObserver
+// 2) Scroll reveal using IntersectionObserver (with staggered groups)
 const revealEls = [...document.querySelectorAll('.reveal')];
-if ('IntersectionObserver' in window && revealEls.length) {
+
+// Assign incremental delays to items inside a [data-stagger] container
+if (!prefersReducedMotion) {
+  document.querySelectorAll('[data-stagger]').forEach((group) => {
+    [...group.querySelectorAll('.reveal')].forEach((el, i) => {
+      el.style.setProperty('--reveal-delay', `${i * 90}ms`);
+    });
+  });
+}
+
+if (!prefersReducedMotion && 'IntersectionObserver' in window && revealEls.length) {
   const io = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
         if (entry.isIntersecting) {
-          entry.target.classList.add('is-visible');
-          io.unobserve(entry.target);
+          const el = entry.target;
+          el.classList.add('is-visible');
+          io.unobserve(el);
+          // Clear the stagger delay once revealed so hover stays snappy
+          el.addEventListener(
+            'transitionend',
+            () => el.style.setProperty('--reveal-delay', '0ms'),
+            { once: true }
+          );
         }
       }
     },
@@ -63,7 +83,7 @@ function attachRipple(el) {
   el.addEventListener('pointerleave', clear);
 }
 
-[...document.querySelectorAll('button[data-animate="ripple"]')].forEach(attachRipple);
+[...document.querySelectorAll('[data-animate="ripple"]')].forEach(attachRipple);
 
 // 4) Sticky header shadow + slight shrink on scroll
 if (header) {
@@ -110,4 +130,33 @@ if ('IntersectionObserver' in window && sections.length && navLinks.length) {
   );
 
   sections.forEach((s) => io.observe(s));
+}
+
+// 6) 3D tilt on cards — rotates the inner card toward the cursor + moves a glossy highlight
+const tiltWraps = [...document.querySelectorAll('[data-tilt]')];
+if (!prefersReducedMotion && tiltWraps.length && window.matchMedia('(pointer: fine)').matches) {
+  const MAX = 8; // max tilt in degrees
+
+  for (const wrap of tiltWraps) {
+    const card = wrap.querySelector('article');
+    const glare = wrap.querySelector('.tilt-glare');
+    if (!card) continue;
+
+    wrap.addEventListener('pointermove', (e) => {
+      const r = wrap.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width; // 0..1
+      const py = (e.clientY - r.top) / r.height; // 0..1
+      const ry = (px - 0.5) * (MAX * 2);
+      const rx = (0.5 - py) * (MAX * 2);
+      card.style.transform = `rotateX(${rx.toFixed(2)}deg) rotateY(${ry.toFixed(2)}deg) scale(1.02)`;
+      if (glare) {
+        glare.style.setProperty('--gx', `${(px * 100).toFixed(1)}%`);
+        glare.style.setProperty('--gy', `${(py * 100).toFixed(1)}%`);
+      }
+    });
+
+    wrap.addEventListener('pointerleave', () => {
+      card.style.transform = '';
+    });
+  }
 }

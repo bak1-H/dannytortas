@@ -1,0 +1,55 @@
+---
+import SectionTitle from './ui/SectionTitle.astro';
+
+const features = [
+  {
+    icon: 'cake',
+    title: 'Bases Premium',
+    text: 'Bizcochos de vainilla, chocolate, nuez o amapola, siempre frescos.'
+  },
+  {
+    icon: 'icecream',
+    title: 'Rellenos Cremosos',
+    text: 'Manjar casero, crema chantilly, ganache de chocolate y más.'
+  },
+  {
+    icon: 'nutrition',
+    title: 'Frutas Frescas',
+    text: 'Frambuesas, frutillas, duraznos y piña de temporada.'
+  },
+  {
+    icon: 'auto_awesome',
+    title: 'Opciones Especiales',
+    text: 'Consulta por diseños y sabores personalizados según tu preferencia.'
+  }
+];
+---
+
+<section id="variedad" data-section class="relative overflow-hidden py-section px-6 bg-primary text-white">
+  <span
+    class="material-symbols-outlined pointer-events-none absolute -top-10 right-0 text-[300px] opacity-10 select-none"
+    style="font-variation-settings: 'FILL' 1;"
+    aria-hidden="true"
+  >bakery_dining</span>
+
+  <div class="max-w-container mx-auto relative z-10">
+    <div class="text-center mb-16">
+      <SectionTitle title="Variedad sin límites" tone="light" />
+      <p class="mx-auto mt-6 max-w-2xl text-lg text-white/80 leading-relaxed">
+        Descubre nuestra amplia variedad de rellenos y bases, pensados para complacer todos los gustos.
+      </p>
+    </div>
+
+    <div data-stagger class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+      {
+        features.map((feature) => (
+          <div class="reveal rounded-3xl border border-white/20 bg-white/10 p-8 shadow-lg shadow-black/10 ring-1 ring-inset ring-white/10 backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-white/30 hover:bg-white/[0.18]">
+            <span class="material-symbols-outlined mb-4 text-5xl text-sky" aria-hidden="true">{feature.icon}</span>
+            <h3 class="font-display text-xl mb-2">{feature.title}</h3>
+            <p class="text-white/70 leading-relaxed">{feature.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
