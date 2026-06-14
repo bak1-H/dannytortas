@@ -62,15 +62,12 @@ const info: Record<string, string> = {
       <div data-panel={cat.id} class={i === 0 ? '' : 'hidden'}>
         <div class="marquee">
           <div class="marquee-track">
-            {[...cat.photos, ...cat.photos].map((photo, j) => (
-              <figure
-                class="mr-5 shrink-0 w-[240px] sm:w-[280px] cursor-pointer select-none"
-                aria-hidden={j >= cat.photos.length ? 'true' : undefined}
-              >
+            {cat.photos.map((photo, j) => (
+              <figure class="mr-5 shrink-0 w-[240px] sm:w-[280px] cursor-pointer select-none">
                 <div class="clip-fix relative aspect-[3/4] overflow-hidden rounded-3xl shadow-soft">
                   <Image
                     src={photo}
-                    alt={`${cat.label} de Danny Tortas ${(j % cat.photos.length) + 1}`}
+                    alt={`${cat.label} de Danny Tortas ${j + 1}`}
                     width={560}
                     format="webp"
                     class="h-full w-full object-cover"
@@ -111,18 +108,34 @@ const info: Record<string, string> = {
       const track = marquee.querySelector<HTMLElement>('.marquee-track');
       if (!track) return;
 
-      // The track holds every photo twice; wrapping at the halfway point makes
-      // the loop seamless in both directions.
-      let half = track.scrollWidth / 2;
-      const remeasure = () => { half = track.scrollWidth / 2; };
-      window.addEventListener('resize', remeasure);
-      window.addEventListener('load', remeasure);
+      // The markup renders ONE set of photos. We clone whole sets until the
+      // track is comfortably wider than the viewport, then run a "treadmill":
+      // the scroll position is kept inside the [unit, 2*unit) band and wrapped
+      // by one set width, so the loop is infinite and never hits an edge —
+      // regardless of how few photos a category has or how wide the screen is.
+      const originals = [...track.children] as HTMLElement[];
+      if (!originals.length) return;
 
-      // Float accumulator: browsers truncate scrollLeft to an integer, so the
-      // sub-pixel drift must be tracked separately or it never advances.
-      let pos = 1;
-      marquee.scrollLeft = pos;
+      let unit = 0; // width of a single set; 0 means "needs (re)build"
 
+      const buildClones = () => {
+        track.querySelectorAll('[data-clone]').forEach((n) => n.remove());
+        unit = track.scrollWidth; // only the original set is present now
+        if (unit <= 0) return; // panel still hidden (display:none) — try again later
+        const target = Math.max(unit * 3, marquee.clientWidth + unit * 2) + unit;
+        while (track.scrollWidth < target) {
+          for (const node of originals) {
+            const clone = node.cloneNode(true) as HTMLElement;
+            clone.setAttribute('data-clone', '');
+            clone.setAttribute('aria-hidden', 'true');
+            track.appendChild(clone);
+          }
+        }
+        marquee.scrollLeft = unit;
+        pos = unit;
+      };
+
+      let pos = 0;
       let hovering = false;
       let dragging = false;
       let activeCard = false;
@@ -131,14 +144,22 @@ const info: Record<string, string> = {
 
       const pause = () => { resumeAt = performance.now() + RESUME_DELAY; };
 
+      // Keep the scroll position inside the central band [unit, 2*unit)
+      const wrap = () => {
+        if (unit <= 0) return;
+        if (marquee.scrollLeft >= unit * 2) marquee.scrollLeft -= unit;
+        else if (marquee.scrollLeft < unit) marquee.scrollLeft += unit;
+      };
+
       const tick = () => {
         const visible = marquee.offsetParent !== null;
+        if (visible && unit === 0) buildClones(); // lazy build once the panel is shown
         const canAuto =
-          visible && !reduceMotion && !hovering && !dragging && !activeCard && performance.now() >= resumeAt;
+          visible && unit > 0 && !reduceMotion && !hovering && !dragging && !activeCard && performance.now() >= resumeAt;
         if (canAuto) {
           if (!wasAuto) pos = marquee.scrollLeft; // resync after the user moved it
           pos += AUTO_SPEED;
-          if (half > 0 && pos >= half) pos -= half;
+          if (pos >= unit * 2) pos -= unit;
           marquee.scrollLeft = pos;
         }
         wasAuto = canAuto;
@@ -146,13 +167,17 @@ const info: Record<string, string> = {
       };
       requestAnimationFrame(tick);
 
+      // Rebuild when layout changes (viewport width / responsive card sizes).
+      let resizeTimer = 0;
+      window.addEventListener('resize', () => {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(() => { unit = 0; }, 200);
+      });
+      window.addEventListener('load', () => { unit = 0; });
+
       // Keep the loop seamless for native (touch momentum, trackpad) scrolling.
       // This must NOT pause the drift — programmatic scroll fires here too.
-      marquee.addEventListener('scroll', () => {
-        if (half <= 0) return;
-        if (marquee.scrollLeft >= half) marquee.scrollLeft -= half;
-        else if (marquee.scrollLeft <= 0) marquee.scrollLeft += half;
-      }, { passive: true });
+      marquee.addEventListener('scroll', wrap, { passive: true });
 
       // Only real user input pauses the drift
       marquee.addEventListener('wheel', pause, { passive: true });
@@ -180,9 +205,9 @@ const info: Record<string, string> = {
         if (Math.abs(dx) > 4) moved = true;
         marquee.scrollLeft = startScroll - dx;
         // Wrap mid-drag, shifting the anchor so the photos keep tracking the cursor
-        if (half > 0) {
-          if (marquee.scrollLeft >= half) { marquee.scrollLeft -= half; startScroll -= half; }
-          else if (marquee.scrollLeft <= 0) { marquee.scrollLeft += half; startScroll += half; }
+        if (unit > 0) {
+          if (marquee.scrollLeft >= unit * 2) { marquee.scrollLeft -= unit; startScroll -= unit; }
+          else if (marquee.scrollLeft < unit) { marquee.scrollLeft += unit; startScroll += unit; }
         }
       });
       const stopDrag = (e: PointerEvent) => {
@@ -200,15 +225,16 @@ const info: Record<string, string> = {
       }, true);
       marquee.addEventListener('dragstart', (e) => e.preventDefault());
 
-      // Touch: tap a card to reveal its info and hold the drift
+      // Touch: tap a card to reveal its info and hold the drift.
+      // Delegated so cloned cards work too.
       if (isTouch) {
-        marquee.querySelectorAll<HTMLElement>('figure').forEach((fig) => {
-          fig.addEventListener('click', () => {
-            const wasActive = fig.classList.contains('is-active');
-            marquee.querySelectorAll('figure.is-active').forEach((el) => el.classList.remove('is-active'));
-            activeCard = !wasActive;
-            if (!wasActive) fig.classList.add('is-active');
-          });
+        marquee.addEventListener('click', (e) => {
+          const fig = (e.target as HTMLElement).closest('figure');
+          if (!fig || !marquee.contains(fig)) return;
+          const wasActive = fig.classList.contains('is-active');
+          marquee.querySelectorAll('figure.is-active').forEach((el) => el.classList.remove('is-active'));
+          activeCard = !wasActive;
+          if (!wasActive) fig.classList.add('is-active');
         });
       }
     });
