@@ -13,11 +13,6 @@ import Variety from '../components/Variety.astro';
 import HowToOrder from '../components/HowToOrder.astro';
 import Contact from '../components/Contact.astro';
 import Footer from '../components/Footer.astro';
-import { getImage } from 'astro:assets';
-import heroImage from '../img/img_tortas.png';
-
-// Same params as Hero.astro so the generated URL matches — lets us preload the LCP image
-const heroBg = await getImage({ src: heroImage, format: 'webp', width: 1920, quality: 68 });
 
 // --- SEO constants (single source of truth) ---
 const SITE_URL = 'https://dannytortas.cl';
@@ -62,10 +57,6 @@ const jsonLd = {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-    <!-- Preload the hero background — it's the LCP, and as a CSS background it would
-         otherwise be discovered late. fetchpriority high pulls it into the critical path. -->
-    <link rel="preload" as="image" href={heroBg.src} fetchpriority="high" />
 
     <!-- Primary meta -->
     <title>{TITLE}</title>
