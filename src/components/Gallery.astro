@@ -61,7 +61,7 @@ const info: Record<string, string> = {
     categories.map((cat, i) => (
       <div data-panel={cat.id} class={i === 0 ? '' : 'hidden'}>
         <div class="marquee">
-          <div class="marquee-track" style={`--marquee-duration: ${Math.max(24, cat.photos.length * 4.5)}s`}>
+          <div class="marquee-track">
             {[...cat.photos, ...cat.photos].map((photo, j) => (
               <figure
                 class="mr-5 shrink-0 w-[240px] sm:w-[280px] cursor-pointer select-none"
@@ -102,27 +102,100 @@ const info: Record<string, string> = {
       });
     });
 
-    // Touch devices: tap a card to pause the marquee and reveal its ingredients
-    if (window.matchMedia('(hover: none)').matches) {
-      const clear = () => {
-        section.querySelectorAll('figure.is-active').forEach((el) => el.classList.remove('is-active'));
-        section.querySelectorAll('.marquee.is-paused').forEach((el) => el.classList.remove('is-paused'));
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const isTouch = window.matchMedia('(hover: none)').matches;
+    const AUTO_SPEED = 0.35; // px per frame — gentle ambient drift
+    const RESUME_DELAY = 1800; // ms to wait after the user interacts before drifting again
+
+    section.querySelectorAll<HTMLElement>('.marquee').forEach((marquee) => {
+      const track = marquee.querySelector<HTMLElement>('.marquee-track');
+      if (!track) return;
+
+      // The track holds every photo twice; wrapping at the halfway point makes
+      // the loop seamless in both directions.
+      let half = track.scrollWidth / 2;
+      const remeasure = () => { half = track.scrollWidth / 2; };
+      window.addEventListener('resize', remeasure);
+      window.addEventListener('load', remeasure);
+      marquee.scrollLeft = 1; // never rest exactly at 0 (keeps the wrap stable)
+
+      let hovering = false;
+      let dragging = false;
+      let activeCard = false;
+      let resumeAt = 0;
+
+      const wrap = () => {
+        if (half <= 0) return;
+        if (marquee.scrollLeft >= half) marquee.scrollLeft -= half;
+        else if (marquee.scrollLeft <= 0) marquee.scrollLeft += half;
       };
 
-      section.querySelectorAll<HTMLElement>('figure').forEach((fig) => {
-        fig.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const wasActive = fig.classList.contains('is-active');
-          clear();
-          if (!wasActive) {
-            fig.classList.add('is-active');
-            fig.closest('.marquee')?.classList.add('is-paused');
-          }
-        });
-      });
+      const tick = () => {
+        const visible = marquee.offsetParent !== null;
+        if (visible && !reduceMotion && !hovering && !dragging && !activeCard && performance.now() >= resumeAt) {
+          marquee.scrollLeft += AUTO_SPEED;
+          wrap();
+        }
+        requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
 
-      // Tap anywhere else resumes
-      document.addEventListener('click', clear);
-    }
+      // Native scrolling (touch momentum, trackpad, wheel) — keep the loop seamless
+      marquee.addEventListener('scroll', () => {
+        resumeAt = performance.now() + RESUME_DELAY;
+        wrap();
+      }, { passive: true });
+
+      // Pause the drift while the cursor hovers the strip
+      marquee.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hovering = true; });
+      marquee.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') hovering = false; });
+
+      // Mouse click-and-drag to scroll (touch already scrolls natively)
+      let startX = 0;
+      let startScroll = 0;
+      let moved = false;
+      marquee.addEventListener('pointerdown', (e) => {
+        if (e.pointerType !== 'mouse') return;
+        dragging = true;
+        moved = false;
+        startX = e.clientX;
+        startScroll = marquee.scrollLeft;
+        marquee.classList.add('is-dragging');
+        marquee.setPointerCapture(e.pointerId);
+      });
+      marquee.addEventListener('pointermove', (e) => {
+        if (!dragging) return;
+        const dx = e.clientX - startX;
+        if (Math.abs(dx) > 4) moved = true;
+        marquee.scrollLeft = startScroll - dx;
+        wrap();
+      });
+      const stopDrag = (e: PointerEvent) => {
+        if (!dragging) return;
+        dragging = false;
+        marquee.classList.remove('is-dragging');
+        resumeAt = performance.now() + RESUME_DELAY;
+        try { marquee.releasePointerCapture(e.pointerId); } catch {}
+      };
+      marquee.addEventListener('pointerup', stopDrag);
+      marquee.addEventListener('pointercancel', stopDrag);
+      // Swallow the click that fires at the end of a real drag so it can't toggle a card
+      marquee.addEventListener('click', (e) => {
+        if (moved) { e.preventDefault(); e.stopPropagation(); moved = false; }
+      }, true);
+      marquee.addEventListener('dragstart', (e) => e.preventDefault());
+
+      // Touch: tap a card to reveal its info and hold the drift
+      if (isTouch) {
+        marquee.querySelectorAll<HTMLElement>('figure').forEach((fig) => {
+          fig.addEventListener('click', () => {
+            const wasActive = fig.classList.contains('is-active');
+            marquee.querySelectorAll('figure.is-active').forEach((el) => el.classList.remove('is-active'));
+            activeCard = !wasActive;
+            if (!wasActive) fig.classList.add('is-active');
+          });
+        });
+      }
+    });
   }
 </script>

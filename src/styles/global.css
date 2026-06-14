@@ -29,31 +29,34 @@ body {
   display: none;
 }
 
-/* Continuous marquee gallery — the track holds the photos twice and slides to
-   -50% so the loop is seamless. Pauses on hover; disabled for reduced motion. */
+/* Drag-to-scroll gallery — the track holds the photos twice for a seamless
+   loop. JS drives an ambient drift, native scroll + pointer drag give control.
+   Touch scrolls natively (with momentum); mouse uses click-and-drag. */
 .marquee {
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge legacy */
+  touch-action: pan-x;
+  cursor: grab;
+  user-select: none;
   -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
   mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+.marquee::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+.marquee.is-dragging {
+  cursor: grabbing;
 }
 .marquee-track {
   display: flex;
   width: max-content;
-  animation: marquee var(--marquee-duration, 40s) linear infinite;
 }
-@media (hover: hover) {
-  .marquee:hover .marquee-track {
-    animation-play-state: paused;
-  }
-}
-/* Paused via tap on touch devices */
-.marquee.is-paused .marquee-track {
-  animation-play-state: paused;
-}
-@keyframes marquee {
-  to {
-    transform: translateX(-50%);
-  }
+.marquee img {
+  -webkit-user-drag: none;
+  user-drag: none;
 }
 
 /* Per-card ingredient overlay — revealed on hover (mouse) or tap (.is-active) */
@@ -80,14 +83,7 @@ body {
   opacity: 1;
   transform: none;
 }
-@media (prefers-reduced-motion: reduce) {
-  .marquee {
-    overflow-x: auto;
-  }
-  .marquee-track {
-    animation: none;
-  }
-}
+/* Reduced motion: JS skips the ambient drift; native scroll/drag still work. */
 
 /* Stabilizes a rounded overflow:hidden clip when a child is transformed,
    preventing Chromium/Safari from leaking square corners on repeated hover. */
