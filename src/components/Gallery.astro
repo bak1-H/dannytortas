@@ -1,0 +1,119 @@
+---
+import { Image } from 'astro:assets';
+import type { ImageMetadata } from 'astro';
+import SectionTitle from './ui/SectionTitle.astro';
+
+// One glob per folder (globs must be static literals). Note: tartas uses .jpg
+const coctMods = import.meta.glob<{ default: ImageMetadata }>('../img/Cocteleria/*.jpeg', { eager: true });
+const persMods = import.meta.glob<{ default: ImageMetadata }>('../img/personalizadas/*.jpeg', { eager: true });
+const tartMods = import.meta.glob<{ default: ImageMetadata }>('../img/tartas/*.jpg', { eager: true });
+
+const toPhotos = (mods: Record<string, { default: ImageMetadata }>) =>
+  Object.entries(mods)
+    .sort(([a], [b]) => a.localeCompare(b, undefined, { numeric: true }))
+    .map(([, mod]) => mod.default);
+
+const categories = [
+  { id: 'tartas', label: 'Tartas', photos: toPhotos(tartMods) },
+  { id: 'personalizadas', label: 'Tortas Personalizadas', photos: toPhotos(persMods) },
+  { id: 'cocteleria', label: 'Coctelería', photos: toPhotos(coctMods) }
+];
+
+// PLACEHOLDER — reemplazá por los ingredientes reales. Se muestra al pasar el mouse o tocar una card.
+const info: Record<string, string> = {
+  tartas: 'Masa quebrada artesanal, relleno cremoso y fruta o cobertura de estación.',
+  personalizadas: 'Bizcocho esponjoso, rellenos a elección y decoración a medida para tu evento.',
+  cocteleria: 'Bocados dulces y salados, preparados al momento con ingredientes frescos.'
+};
+---
+
+<section id="galeria" data-section class="py-section bg-cream overflow-hidden">
+  <div class="max-w-container mx-auto px-6">
+    <SectionTitle eyebrow="Galería" title="Nuestras creaciones" align="left" />
+
+    <div role="tablist" aria-label="Categorías" class="flex flex-wrap gap-3 mt-8 mb-8">
+      {
+        categories.map((cat, i) => (
+          <button
+            type="button"
+            role="tab"
+            data-tab={cat.id}
+            aria-selected={i === 0 ? 'true' : 'false'}
+            class="rounded-full border border-primary/20 bg-white px-5 py-2 text-sm font-semibold text-ink transition-colors hover:text-primary aria-selected:border-primary aria-selected:bg-primary aria-selected:text-white"
+          >
+            {cat.label}
+          </button>
+        ))
+      }
+    </div>
+  </div>
+
+  {
+    categories.map((cat, i) => (
+      <div data-panel={cat.id} class={i === 0 ? '' : 'hidden'}>
+        <div class="marquee">
+          <div class="marquee-track" style={`--marquee-duration: ${Math.max(24, cat.photos.length * 4.5)}s`}>
+            {[...cat.photos, ...cat.photos].map((photo, j) => (
+              <figure
+                class="mr-5 shrink-0 w-[240px] sm:w-[280px] cursor-pointer select-none"
+                aria-hidden={j >= cat.photos.length ? 'true' : undefined}
+              >
+                <div class="clip-fix relative aspect-[3/4] overflow-hidden rounded-3xl shadow-soft">
+                  <Image
+                    src={photo}
+                    alt={`${cat.label} de Danny Tortas ${(j % cat.photos.length) + 1}`}
+                    width={560}
+                    format="webp"
+                    class="h-full w-full object-cover"
+                  />
+                  <div class="card-info absolute inset-x-0 bottom-0 p-5 pt-12">
+                    <p class="text-white text-sm leading-snug font-medium">{info[cat.id]}</p>
+                  </div>
+                </div>
+              </figure>
+            ))}
+          </div>
+        </div>
+      </div>
+    ))
+  }
+</section>
+
+<script>
+  const section = document.getElementById('galeria');
+  if (section) {
+    const tabs = [...section.querySelectorAll<HTMLElement>('[data-tab]')];
+    const panels = [...section.querySelectorAll<HTMLElement>('[data-panel]')];
+
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const id = tab.getAttribute('data-tab');
+        tabs.forEach((t) => t.setAttribute('aria-selected', String(t === tab)));
+        panels.forEach((p) => p.classList.toggle('hidden', p.getAttribute('data-panel') !== id));
+      });
+    });
+
+    // Touch devices: tap a card to pause the marquee and reveal its ingredients
+    if (window.matchMedia('(hover: none)').matches) {
+      const clear = () => {
+        section.querySelectorAll('figure.is-active').forEach((el) => el.classList.remove('is-active'));
+        section.querySelectorAll('.marquee.is-paused').forEach((el) => el.classList.remove('is-paused'));
+      };
+
+      section.querySelectorAll<HTMLElement>('figure').forEach((fig) => {
+        fig.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const wasActive = fig.classList.contains('is-active');
+          clear();
+          if (!wasActive) {
+            fig.classList.add('is-active');
+            fig.closest('.marquee')?.classList.add('is-paused');
+          }
+        });
+      });
+
+      // Tap anywhere else resumes
+      document.addEventListener('click', clear);
+    }
+  }
+</script>

@@ -20,6 +20,75 @@ body {
   line-height: 1;
 }
 
+/* Hide scrollbar while keeping scroll/swipe (carousel track) */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Continuous marquee gallery — the track holds the photos twice and slides to
+   -50% so the loop is seamless. Pauses on hover; disabled for reduced motion. */
+.marquee {
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 7%, #000 93%, transparent);
+}
+.marquee-track {
+  display: flex;
+  width: max-content;
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+}
+@media (hover: hover) {
+  .marquee:hover .marquee-track {
+    animation-play-state: paused;
+  }
+}
+/* Paused via tap on touch devices */
+.marquee.is-paused .marquee-track {
+  animation-play-state: paused;
+}
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Per-card ingredient overlay — revealed on hover (mouse) or tap (.is-active) */
+.card-info {
+  background: linear-gradient(
+    to top,
+    rgba(44, 39, 56, 0.94),
+    rgba(44, 39, 56, 0.5) 55%,
+    rgba(44, 39, 56, 0)
+  );
+  opacity: 0;
+  transform: translateY(15%);
+  transition:
+    opacity 350ms var(--ease-soft),
+    transform 350ms var(--ease-soft);
+}
+@media (hover: hover) {
+  .marquee figure:hover .card-info {
+    opacity: 1;
+    transform: none;
+  }
+}
+.marquee figure.is-active .card-info {
+  opacity: 1;
+  transform: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .marquee {
+    overflow-x: auto;
+  }
+  .marquee-track {
+    animation: none;
+  }
+}
+
 /* Stabilizes a rounded overflow:hidden clip when a child is transformed,
    preventing Chromium/Safari from leaking square corners on repeated hover. */
 .clip-fix {
