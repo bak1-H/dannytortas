@@ -3,10 +3,13 @@ import { Image } from 'astro:assets';
 import type { ImageMetadata } from 'astro';
 import SectionTitle from './ui/SectionTitle.astro';
 
-// One glob per folder (globs must be static literals). Note: tartas uses .jpg
+// One glob per folder (globs must be static literals). Note: tartas + new folders use .jpg
 const coctMods = import.meta.glob<{ default: ImageMetadata }>('../img/Cocteleria/*.jpeg', { eager: true });
 const persMods = import.meta.glob<{ default: ImageMetadata }>('../img/personalizadas/*.jpeg', { eager: true });
 const tartMods = import.meta.glob<{ default: ImageMetadata }>('../img/tartas/*.jpg', { eager: true });
+const infaMods = import.meta.glob<{ default: ImageMetadata }>('../img/Infantiles/*.jpg', { eager: true });
+const matrMods = import.meta.glob<{ default: ImageMetadata }>('../img/matrimonios/*.jpg', { eager: true });
+const sinaMods = import.meta.glob<{ default: ImageMetadata }>('../img/sin-azucar/*.jpg', { eager: true });
 
 const toPhotos = (mods: Record<string, { default: ImageMetadata }>) =>
   Object.entries(mods)
@@ -16,6 +19,9 @@ const toPhotos = (mods: Record<string, { default: ImageMetadata }>) =>
 const categories = [
   { id: 'tartas', label: 'Tartas', photos: toPhotos(tartMods) },
   { id: 'personalizadas', label: 'Tortas Personalizadas', photos: toPhotos(persMods) },
+  { id: 'infantiles', label: 'Tortas Infantiles', photos: toPhotos(infaMods) },
+  { id: 'matrimonios', label: 'Matrimonios', photos: toPhotos(matrMods) },
+  { id: 'sin-azucar', label: 'Sin Azúcar', photos: toPhotos(sinaMods) },
   { id: 'cocteleria', label: 'Coctelería', photos: toPhotos(coctMods) }
 ];
 
@@ -23,6 +29,9 @@ const categories = [
 const info: Record<string, string> = {
   tartas: 'Masa quebrada artesanal, relleno cremoso y fruta o cobertura de estación.',
   personalizadas: 'Bizcocho esponjoso, rellenos a elección y decoración a medida para tu evento.',
+  infantiles: 'Diseños temáticos coloridos, bizcocho suave y rellenos pensados para los más chicos.',
+  matrimonios: 'Tortas de varios pisos, terminaciones elegantes y sabores a medida para tu gran día.',
+  'sin-azucar': 'Endulzadas de forma natural, ideales para diabéticos o quienes cuidan el azúcar.',
   cocteleria: 'Bocados dulces y salados, preparados al momento con ingredientes frescos.'
 };
 ---
