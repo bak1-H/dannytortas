@@ -1,4 +1,7 @@
 ---
+import { Image } from 'astro:assets';
+import sealLogo from '../img/logo-seal.png';
+
 const WHATSAPP = 'https://wa.me/56961497814';
 const INSTAGRAM = 'https://www.instagram.com/danny_tortas/';
 
@@ -15,11 +18,12 @@ const quickLinks = [
   <div class="max-w-container mx-auto grid grid-cols-1 md:grid-cols-4 gap-12">
     <div class="reveal flex flex-col gap-4">
       <div class="flex items-center gap-2.5">
-        <img
-          src="/favicon.png"
+        <Image
+          src={sealLogo}
           alt="Danny Tortas"
-          width="44"
-          height="44"
+          width={88}
+          height={88}
+          format="webp"
           class="h-11 w-11 rounded-full object-cover shadow-sm"
         />
         <span class="font-display text-lg text-primary">Danny Tortas</span>

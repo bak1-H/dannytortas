@@ -11,6 +11,8 @@
   },
   "dependencies": {
     "@astrojs/sitemap": "^3.7.3",
+    "@fontsource-variable/plus-jakarta-sans": "^5.2.8",
+    "@fontsource/libre-caslon-text": "^5.2.7",
     "astro": "^5.17.1"
   },
   "devDependencies": {

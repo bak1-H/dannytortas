@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import sealLogo from '../img/logo-seal.png';
 import Button from './ui/Button.astro';
 
 const WHATSAPP = 'https://wa.me/56961497814';
@@ -17,11 +19,13 @@ const links = [
 >
   <div class="max-w-container mx-auto flex items-center justify-between gap-2 px-4 sm:px-6 lg:px-10 py-3">
     <a href="#top" class="flex items-center gap-2.5">
-      <img
-        src="/favicon.png"
+      <Image
+        src={sealLogo}
         alt="Danny Tortas"
-        width="48"
-        height="48"
+        width={96}
+        height={96}
+        format="webp"
+        loading="eager"
         class="h-12 w-12 rounded-full object-cover shadow-sm"
       />
       <span class="font-display text-xl text-primary tracking-tight">Danny Tortas</span>

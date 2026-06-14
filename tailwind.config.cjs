@@ -20,7 +20,7 @@ module.exports = {
       },
       fontFamily: {
         display: ['"Libre Caslon Text"', 'ui-serif', 'Georgia', 'serif'],
-        body: ['"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif']
+        body: ['"Plus Jakarta Sans Variable"', '"Plus Jakarta Sans"', 'ui-sans-serif', 'system-ui', 'sans-serif']
       },
       borderRadius: {
         DEFAULT: '0.5rem',
