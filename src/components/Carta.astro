@@ -1,0 +1,59 @@
+---
+import { Image } from 'astro:assets';
+import cartaImg from '../img/danny_tortas_nuevo.png';
+---
+
+<!-- Modal — opened by any [data-carta-open] button (lives in the navbar) -->
+<div
+  data-carta-modal
+  class="fixed inset-0 z-[100] hidden items-start justify-center overflow-y-auto p-4 sm:p-8"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Carta de sabores y precios de Danny Tortas"
+>
+  <div data-carta-backdrop class="fixed inset-0 bg-ink/80 backdrop-blur-sm"></div>
+
+  <button
+    type="button"
+    data-carta-close
+    aria-label="Cerrar carta"
+    class="fixed top-4 right-4 z-[110] flex h-11 w-11 items-center justify-center rounded-full bg-white text-ink shadow-lg transition-transform hover:scale-110"
+  >
+    <span class="material-symbols-outlined" aria-hidden="true">close</span>
+  </button>
+
+  <div class="relative z-10 my-auto w-full max-w-3xl">
+    <Image
+      src={cartaImg}
+      alt="Carta de sabores y precios de Danny Tortas"
+      width={1085}
+      format="webp"
+      class="w-full h-auto rounded-2xl shadow-2xl"
+    />
+  </div>
+</div>
+
+<script>
+  const modal = document.querySelector<HTMLElement>('[data-carta-modal]');
+  const openers = document.querySelectorAll('[data-carta-open]');
+  const closers = document.querySelectorAll('[data-carta-close], [data-carta-backdrop]');
+
+  if (modal) {
+    const open = () => {
+      modal.classList.remove('hidden');
+      modal.classList.add('flex');
+      document.body.style.overflow = 'hidden';
+    };
+    const close = () => {
+      modal.classList.add('hidden');
+      modal.classList.remove('flex');
+      document.body.style.overflow = '';
+    };
+
+    openers.forEach((btn) => btn.addEventListener('click', open));
+    closers.forEach((el) => el.addEventListener('click', close));
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && !modal.classList.contains('hidden')) close();
+    });
+  }
+</script>
