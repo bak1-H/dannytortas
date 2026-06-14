@@ -117,36 +117,47 @@ const info: Record<string, string> = {
       const remeasure = () => { half = track.scrollWidth / 2; };
       window.addEventListener('resize', remeasure);
       window.addEventListener('load', remeasure);
-      marquee.scrollLeft = 1; // never rest exactly at 0 (keeps the wrap stable)
+
+      // Float accumulator: browsers truncate scrollLeft to an integer, so the
+      // sub-pixel drift must be tracked separately or it never advances.
+      let pos = 1;
+      marquee.scrollLeft = pos;
 
       let hovering = false;
       let dragging = false;
       let activeCard = false;
       let resumeAt = 0;
+      let wasAuto = false;
 
-      const wrap = () => {
-        if (half <= 0) return;
-        if (marquee.scrollLeft >= half) marquee.scrollLeft -= half;
-        else if (marquee.scrollLeft <= 0) marquee.scrollLeft += half;
-      };
+      const pause = () => { resumeAt = performance.now() + RESUME_DELAY; };
 
       const tick = () => {
         const visible = marquee.offsetParent !== null;
-        if (visible && !reduceMotion && !hovering && !dragging && !activeCard && performance.now() >= resumeAt) {
-          marquee.scrollLeft += AUTO_SPEED;
-          wrap();
+        const canAuto =
+          visible && !reduceMotion && !hovering && !dragging && !activeCard && performance.now() >= resumeAt;
+        if (canAuto) {
+          if (!wasAuto) pos = marquee.scrollLeft; // resync after the user moved it
+          pos += AUTO_SPEED;
+          if (half > 0 && pos >= half) pos -= half;
+          marquee.scrollLeft = pos;
         }
+        wasAuto = canAuto;
         requestAnimationFrame(tick);
       };
       requestAnimationFrame(tick);
 
-      // Native scrolling (touch momentum, trackpad, wheel) — keep the loop seamless
+      // Keep the loop seamless for native (touch momentum, trackpad) scrolling.
+      // This must NOT pause the drift — programmatic scroll fires here too.
       marquee.addEventListener('scroll', () => {
-        resumeAt = performance.now() + RESUME_DELAY;
-        wrap();
+        if (half <= 0) return;
+        if (marquee.scrollLeft >= half) marquee.scrollLeft -= half;
+        else if (marquee.scrollLeft <= 0) marquee.scrollLeft += half;
       }, { passive: true });
 
-      // Pause the drift while the cursor hovers the strip
+      // Only real user input pauses the drift
+      marquee.addEventListener('wheel', pause, { passive: true });
+      marquee.addEventListener('touchstart', pause, { passive: true });
+      marquee.addEventListener('touchmove', pause, { passive: true });
       marquee.addEventListener('pointerenter', (e) => { if (e.pointerType === 'mouse') hovering = true; });
       marquee.addEventListener('pointerleave', (e) => { if (e.pointerType === 'mouse') hovering = false; });
 
@@ -168,13 +179,17 @@ const info: Record<string, string> = {
         const dx = e.clientX - startX;
         if (Math.abs(dx) > 4) moved = true;
         marquee.scrollLeft = startScroll - dx;
-        wrap();
+        // Wrap mid-drag, shifting the anchor so the photos keep tracking the cursor
+        if (half > 0) {
+          if (marquee.scrollLeft >= half) { marquee.scrollLeft -= half; startScroll -= half; }
+          else if (marquee.scrollLeft <= 0) { marquee.scrollLeft += half; startScroll += half; }
+        }
       });
       const stopDrag = (e: PointerEvent) => {
         if (!dragging) return;
         dragging = false;
         marquee.classList.remove('is-dragging');
-        resumeAt = performance.now() + RESUME_DELAY;
+        pause();
         try { marquee.releasePointerCapture(e.pointerId); } catch {}
       };
       marquee.addEventListener('pointerup', stopDrag);
