@@ -116,6 +116,21 @@ body {
   }
 }
 
+/* Toast notifications — slide up + fade, no layout impact (fixed) */
+.toast {
+  opacity: 0;
+  transform: translateY(1rem);
+  pointer-events: none;
+  transition:
+    opacity 400ms var(--ease-soft),
+    transform 400ms var(--ease-soft);
+}
+.toast.is-shown {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+
 /* Hero overlay so white text stays legible over imagery */
 .hero-gradient {
   background: linear-gradient(to bottom, rgba(44, 39, 56, 0.45), rgba(44, 39, 56, 0.15) 40%, rgba(44, 39, 56, 0.55));

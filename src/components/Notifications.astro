@@ -1,0 +1,91 @@
+---
+// Subtle rotating toasts. Brand messages only (no fake social proof).
+---
+
+<div
+  data-toast
+  class="toast fixed bottom-4 left-4 z-50 w-[calc(100%-2rem)] sm:w-auto sm:max-w-xs"
+  role="status"
+  aria-live="polite"
+>
+  <div
+    data-toast-card
+    class="flex items-start gap-3 rounded-2xl border border-primary/15 bg-white p-4 shadow-soft"
+  >
+    <span data-toast-icon class="text-2xl leading-none" aria-hidden="true"></span>
+    <p data-toast-text class="flex-1 text-sm text-ink leading-snug"></p>
+    <button
+      type="button"
+      data-toast-close
+      aria-label="Cerrar aviso"
+      class="-mr-1 -mt-1 shrink-0 text-muted hover:text-primary transition-colors"
+    >
+      <span class="material-symbols-outlined text-lg">close</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  const WHATSAPP = 'https://wa.me/56961497814';
+  const INSTAGRAM = 'https://www.instagram.com/danny_tortas/';
+
+  const messages = [
+    { icon: '🎂', text: 'Pide tu torta con anticipación — los fines de semana se llenan.', url: WHATSAPP },
+    { icon: '💬', text: '¿Dudas o cotización? Escríbenos por WhatsApp.', url: WHATSAPP },
+    {
+      icon: '💲',
+      text: 'Los valores son con decoración tradicional y simple. Las personalizadas tienen un valor adicional de $3.000.'
+    },
+    { icon: '🍰', text: 'Tortas personalizadas: tú eliges sabor, relleno y diseño.' },
+    { icon: '⭐', text: 'Más de 15 años endulzando celebraciones en Santiago.' },
+    { icon: '📸', text: 'Mira nuestras creaciones en Instagram @danny_tortas.', url: INSTAGRAM }
+  ];
+
+  const toast = document.querySelector<HTMLElement>('[data-toast]');
+  const card = toast?.querySelector<HTMLElement>('[data-toast-card]');
+  const iconEl = toast?.querySelector<HTMLElement>('[data-toast-icon]');
+  const textEl = toast?.querySelector<HTMLElement>('[data-toast-text]');
+  const closeBtn = toast?.querySelector('[data-toast-close]');
+
+  if (toast && card && iconEl && textEl && sessionStorage.getItem('dt_toasts') !== 'off') {
+    let idx = 0;
+    let stopped = false;
+    let currentUrl: string | undefined;
+
+    const FIRST = 9000; // first toast
+    const VISIBLE = 7000; // time on screen
+    const GAP = 28000; // full cycle
+
+    const show = (m: { icon: string; text: string; url?: string }) => {
+      iconEl.textContent = m.icon;
+      textEl.textContent = m.text;
+      currentUrl = m.url;
+      card.classList.toggle('cursor-pointer', Boolean(m.url));
+      toast.classList.add('is-shown');
+    };
+    const hide = () => toast.classList.remove('is-shown');
+
+    const loop = () => {
+      if (stopped) return;
+      show(messages[idx % messages.length]);
+      idx++;
+      window.setTimeout(() => {
+        if (stopped) return;
+        hide();
+        window.setTimeout(loop, GAP - VISIBLE);
+      }, VISIBLE);
+    };
+
+    card.addEventListener('click', () => {
+      if (currentUrl) window.open(currentUrl, '_blank', 'noopener');
+    });
+    closeBtn?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      stopped = true;
+      hide();
+      sessionStorage.setItem('dt_toasts', 'off'); // don't nag again this session
+    });
+
+    window.setTimeout(loop, FIRST);
+  }
+</script>
