@@ -48,7 +48,7 @@ const info: Record<string, string> = {
             role="tab"
             data-tab={cat.id}
             aria-selected={i === 0 ? 'true' : 'false'}
-            class="rounded-full border border-primary/20 bg-white px-5 py-2 text-sm font-semibold text-ink transition-colors hover:text-primary aria-selected:border-primary aria-selected:bg-primary aria-selected:text-white"
+            class="rounded-full border border-primary/20 bg-white px-5 py-2 text-sm font-semibold text-ink transition-colors hover:text-primary aria-selected:border-primary aria-selected:bg-primary aria-selected:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
           >
             {cat.label}
           </button>
@@ -70,6 +70,7 @@ const info: Record<string, string> = {
                     alt={`${cat.label} de Danny Tortas ${j + 1}`}
                     width={560}
                     format="webp"
+                    loading="lazy"
                     class="h-full w-full object-cover"
                   />
                   <div class="card-info absolute inset-x-0 bottom-0 p-5 pt-12">

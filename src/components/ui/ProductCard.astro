@@ -33,10 +33,11 @@ const { image, title, text, badge, cta, href } = Astro.props;
       <p class="text-muted leading-relaxed">{text}</p>
       <a
         href={href}
-        class="mt-2 inline-flex items-center gap-2 text-primary font-semibold hover:gap-4 transition-all"
+        aria-label={`${cta} — ${title}`}
+        class="mt-2 inline-flex items-center gap-2 text-primary font-semibold group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 rounded"
       >
         {cta}
-        <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+        <span class="material-symbols-outlined transition-transform duration-200 group-hover:translate-x-1.5" aria-hidden="true">arrow_forward</span>
       </a>
     </div>
 
